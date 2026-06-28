@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import logging
 import os
 import random
@@ -233,7 +234,13 @@ class UhaleCoordinator(DataUpdateCoordinator[dict]):
         if not folder:
             raise UpdateFailed("No folder configured")
 
-        files = await self.hass.async_add_executor_job(self._scan_folder, folder)
+        try:
+            files = await asyncio.wait_for(
+                self.hass.async_add_executor_job(self._scan_folder, folder),
+                timeout=30,
+            )
+        except asyncio.TimeoutError as err:
+            raise UpdateFailed(f"Timed out scanning {folder}") from err
         if not files:
             raise UpdateFailed(f"No images found in {folder}")
 
@@ -248,7 +255,13 @@ class UhaleCoordinator(DataUpdateCoordinator[dict]):
         self._index = (self._index + step) % len(self._playlist)
         path = self._playlist[self._index]
 
-        data = await self.hass.async_add_executor_job(self._read_file, path)
+        try:
+            data = await asyncio.wait_for(
+                self.hass.async_add_executor_job(self._read_file, path),
+                timeout=30,
+            )
+        except asyncio.TimeoutError as err:
+            raise UpdateFailed(f"Timed out reading {path}") from err
         self.current_bytes = data
         self.current_name = (
             smb.basename(path) if smb.is_smb(path) else os.path.basename(path)

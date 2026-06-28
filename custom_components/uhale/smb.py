@@ -39,6 +39,7 @@ def _register(path: str, username: str | None, password: str | None) -> None:
         server(path),
         username=username or "guest",
         password=password or "",
+        connection_timeout=15,
     )
 
 
