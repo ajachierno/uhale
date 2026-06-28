@@ -1,0 +1,75 @@
+next_image:
+  name: Next image
+  description: Advance the folder slideshow to the next image and push it to the frame.
+  fields:
+    config_entry_id:
+      name: Frame
+      description: Optional config entry id to target a single frame. Omit to apply to all.
+      required: false
+      selector:
+        text:
+
+previous_image:
+  name: Previous image
+  description: Go back to the previous image in the folder slideshow.
+  fields:
+    config_entry_id:
+      name: Frame
+      description: Optional config entry id to target a single frame. Omit to apply to all.
+      required: false
+      selector:
+        text:
+
+refresh:
+  name: Refresh
+  description: Re-evaluate the current source and push the image to the frame now.
+  fields:
+    config_entry_id:
+      name: Frame
+      description: Optional config entry id to target a single frame. Omit to apply to all.
+      required: false
+      selector:
+        text:
+
+set_folder:
+  name: Set folder
+  description: Change the source folder (local path or mounted NAS share) at runtime.
+  fields:
+    folder:
+      name: Folder
+      description: Absolute path to the image folder.
+      required: true
+      example: /media/frame/photos
+      selector:
+        text:
+    config_entry_id:
+      name: Frame
+      description: Optional config entry id to target a single frame. Omit to apply to all.
+      required: false
+      selector:
+        text:
+
+send_image:
+  name: Send image
+  description: Push a specific image to the frame immediately, by local path or URL.
+  fields:
+    path:
+      name: Path
+      description: Absolute path to an image file (must be in an allowlisted directory).
+      required: false
+      example: /media/frame/photos/sunset.jpg
+      selector:
+        text:
+    url:
+      name: URL
+      description: URL of an image to fetch and push.
+      required: false
+      example: https://example.com/image.jpg
+      selector:
+        text:
+    config_entry_id:
+      name: Frame
+      description: Optional config entry id to target a single frame. Omit to apply to all.
+      required: false
+      selector:
+        text:

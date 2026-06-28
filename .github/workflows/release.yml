@@ -1,0 +1,34 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Publish release asset
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set manifest version from tag
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          tmp="$(mktemp)"
+          jq --arg v "$version" '.version = $v' \
+            custom_components/uhale/manifest.json > "$tmp"
+          mv "$tmp" custom_components/uhale/manifest.json
+          echo "manifest version set to $version"
+
+      - name: Create zip
+        run: |
+          cd custom_components/uhale
+          zip -r "${GITHUB_WORKSPACE}/uhale.zip" .
+
+      - name: Attach zip to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: uhale.zip

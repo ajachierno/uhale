@@ -1,0 +1,87 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Uhale Digital Picture Frame",
+        "description": "Configure a frame. You can change any of this later from the integration's options.",
+        "data": {
+          "name": "Name",
+          "mode": "Source mode",
+          "folder": "Image folder (local path or mounted NAS share)",
+          "recursive": "Include subfolders",
+          "shuffle": "Shuffle (random order)",
+          "plex_entity": "Plex media player (for current artwork)",
+          "interval": "Slideshow interval (seconds)",
+          "uploader": "Frame transport",
+          "dlna_entity": "DLNA / cast renderer (for the DLNA transport)",
+          "local_target": "Target folder (for the local/NAS transport)"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Uhale options",
+        "data": {
+          "mode": "Source mode",
+          "folder": "Image folder (local path or mounted NAS share)",
+          "recursive": "Include subfolders",
+          "shuffle": "Shuffle (random order)",
+          "plex_entity": "Plex media player (for current artwork)",
+          "interval": "Slideshow interval (seconds)",
+          "uploader": "Frame transport",
+          "dlna_entity": "DLNA / cast renderer (for the DLNA transport)",
+          "local_target": "Target folder (for the local/NAS transport)"
+        }
+      }
+    }
+  },
+  "selector": {
+    "mode": {
+      "options": {
+        "folder": "Folder slideshow",
+        "plex": "Plex current artwork"
+      }
+    },
+    "uploader": {
+      "options": {
+        "dlna": "DLNA / cast renderer",
+        "local": "Local / NAS folder",
+        "none": "None (preview only)"
+      }
+    }
+  },
+  "entity": {
+    "select": {
+      "mode": {
+        "state": {
+          "folder": "Folder slideshow",
+          "plex": "Plex current artwork"
+        }
+      }
+    }
+  },
+  "services": {
+    "next_image": {
+      "name": "Next image",
+      "description": "Advance the folder slideshow to the next image and push it to the frame."
+    },
+    "previous_image": {
+      "name": "Previous image",
+      "description": "Go back to the previous image in the folder slideshow."
+    },
+    "refresh": {
+      "name": "Refresh",
+      "description": "Re-evaluate the current source and push the image to the frame now."
+    },
+    "set_folder": {
+      "name": "Set folder",
+      "description": "Change the source folder (local path or mounted NAS share) at runtime."
+    },
+    "send_image": {
+      "name": "Send image",
+      "description": "Push a specific image to the frame immediately, by local path or URL."
+    }
+  }
+}
