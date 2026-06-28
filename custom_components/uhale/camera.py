@@ -43,6 +43,10 @@ class UhaleCamera(CoordinatorEntity[UhaleCoordinator], Camera):
             model="Digital Picture Frame",
         )
 
+    @property
+    def available(self) -> bool:
+        return True
+
     async def async_camera_image(
         self, width: int | None = None, height: int | None = None
     ) -> bytes | None:

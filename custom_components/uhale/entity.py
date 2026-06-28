@@ -19,6 +19,14 @@ class UhaleEntity(CoordinatorEntity[UhaleCoordinator]):
         self._attr_unique_id = f"{coordinator.entry.entry_id}_{key}"
 
     @property
+    def available(self) -> bool:
+        # Mode select, shuffle switch and buttons are configuration controls --
+        # they must stay usable even when the *current* source fails to fetch
+        # (e.g. Plex idle or a NAS scan error), otherwise a failing source would
+        # lock the user out of switching away from it.
+        return True
+
+    @property
     def device_info(self) -> DeviceInfo:
         return DeviceInfo(
             identifiers={(DOMAIN, self.coordinator.entry.entry_id)},
