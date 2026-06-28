@@ -86,6 +86,37 @@ that matches your setup:
 - **None** — selects nothing; the camera entity still previews the chosen image,
   which is handy while wiring things up or for use in your own automations.
 
+### Kiosk display page (recommended for stock Uhale/Zeasn frames)
+
+Stock Uhale frames (e.g. the **215KZ**, Android 8.1, app `com.zeasn.frame`) expose
+**no local API, no DLNA, and no image viewer** -- they only sync from the Uhale
+cloud. The reliable way to drive them locally is to **let the frame display a
+page that Home Assistant serves**, instead of pushing to the frame.
+
+The integration serves a full-screen, auto-advancing page at:
+
+```
+http://<home-assistant>:8123/api/uhale/<entry_id>/show?token=<token>
+```
+
+The exact URL (with token) is posted as a **persistent notification** when you
+add the integration, and is also on the **Current image** sensor's `display_url`
+attribute. The page cross-fades to the next image whenever the slideshow
+advances, using your folder / Plex / shuffle settings.
+
+To show it on a stock frame you enable ADB once and sideload a kiosk browser:
+
+1. **Enable ADB.** These frames boot with ADB enabled when powered from a
+   computer's USB port. From a PC with `adb`:
+   `adb connect <frame-ip>:5555` (after a first USB connection + `adb tcpip 5555`).
+2. **Install a kiosk browser** (e.g. [Fully Kiosk Browser](https://www.fully-kiosk.com/)):
+   `adb install Fully-Kiosk-Browser.apk`
+3. **Point it at the display URL** above and enable *Launch on Boot* and
+   *Keep Screen On*. Set it as the Home app so it covers the stock frame app.
+
+After that, ADB is **not** needed at runtime -- the frame just loads the HA page.
+Set `Frame transport` to **None** in this mode (HA serves; the frame pulls).
+
 ### Adding a different transport
 
 Subclass `UhaleUploader` (see `uploaders/base.py`), implement `async_send`, and

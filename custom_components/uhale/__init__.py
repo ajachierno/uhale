@@ -7,6 +7,7 @@ import os
 
 import voluptuous as vol
 
+from homeassistant.components import persistent_notification
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant, ServiceCall
@@ -28,7 +29,7 @@ from .const import (
     SERVICE_SET_FOLDER,
 )
 from .coordinator import UhaleCoordinator
-from .http import async_register_view
+from .http import async_register_views
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -47,7 +48,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     coordinator = UhaleCoordinator(hass, entry)
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = coordinator
 
-    async_register_view(hass)
+    async_register_views(hass)
 
     # Do not hard-fail setup if the folder is momentarily empty/unavailable;
     # entities simply report unavailable until images flow.
@@ -57,7 +58,34 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     entry.async_on_unload(entry.add_update_listener(_async_update_listener))
 
     _async_register_services(hass)
+    _async_notify_display_url(hass, entry, coordinator)
     return True
+
+
+def _async_notify_display_url(
+    hass: HomeAssistant, entry: ConfigEntry, coordinator: UhaleCoordinator
+) -> None:
+    """Drop a persistent notification with the full-screen page URL.
+
+    This is the URL a kiosk app on the frame should load. It includes the
+    access token, so it is only surfaced inside Home Assistant.
+    """
+    try:
+        url = coordinator.show_url()
+    except Exception:  # noqa: BLE001 - URL may be unavailable very early in setup
+        return
+    persistent_notification.async_create(
+        hass,
+        (
+            f"Point your frame's kiosk app at this full-screen display page:\n\n"
+            f"`{url}`\n\n"
+            "It auto-advances using this integration's folder / Plex / shuffle "
+            "settings. The same URL is on the **Current image** sensor's "
+            "`display_url` attribute."
+        ),
+        title=f"Uhale: {entry.title} display URL",
+        notification_id=f"{DOMAIN}_{entry.entry_id}_display_url",
+    )
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:

@@ -36,8 +36,13 @@ class UhaleCurrentImageSensor(UhaleEntity, SensorEntity):
 
     @property
     def extra_state_attributes(self) -> dict[str, str | None]:
+        try:
+            display_url = self.coordinator.show_url()
+        except Exception:  # noqa: BLE001 - base URL may be unavailable
+            display_url = None
         return {
             "mode": self.coordinator.mode,
             "source": self.coordinator.current_source,
             "shuffle": self.coordinator.shuffle,
+            "display_url": display_url,
         }

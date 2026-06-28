@@ -83,6 +83,9 @@ class UhaleCoordinator(DataUpdateCoordinator[dict]):
         self.current_name: str | None = None
         self.current_source: str | None = None
         self.current_content_type = "image/jpeg"
+        # Bumped every time the current image changes; the display page polls
+        # this so it knows when to swap to the new picture.
+        self.current_version = 0
 
         self._uploader: UhaleUploader | None = self._build_uploader()
 
@@ -151,20 +154,30 @@ class UhaleCoordinator(DataUpdateCoordinator[dict]):
         self.current_source = name
         self.current_content_type = content_type
         self._index = max(self._index, 0)
+        self.current_version += 1
         await self._push()
         self.async_set_updated_data(
             {"name": name, "source": name, "mode": self.mode}
         )
 
+    def _base_url(self) -> str:
+        try:
+            return get_url(self.hass, prefer_external=False, allow_external=False)
+        except NoURLAvailableError:
+            return get_url(self.hass)
+
     def image_url(self) -> str:
         """Absolute URL for the current image, served by the HTTP view."""
-        try:
-            base = get_url(self.hass, prefer_external=False, allow_external=False)
-        except NoURLAvailableError:
-            base = get_url(self.hass)
         return (
-            f"{base}/api/{DOMAIN}/{self.entry.entry_id}/current"
-            f"?token={self.token}&v={self._index}"
+            f"{self._base_url()}/api/{DOMAIN}/{self.entry.entry_id}/current"
+            f"?token={self.token}&v={self.current_version}"
+        )
+
+    def show_url(self) -> str:
+        """Absolute URL of the full-screen display page for a kiosk to load."""
+        return (
+            f"{self._base_url()}/api/{DOMAIN}/{self.entry.entry_id}/show"
+            f"?token={self.token}"
         )
 
     # ------------------------------------------------------------------
@@ -197,6 +210,7 @@ class UhaleCoordinator(DataUpdateCoordinator[dict]):
         except Exception as err:  # noqa: BLE001 - surface as coordinator failure
             raise UpdateFailed(str(err)) from err
 
+        self.current_version += 1
         await self._push()
         return {
             "name": self.current_name,
@@ -265,11 +279,7 @@ class UhaleCoordinator(DataUpdateCoordinator[dict]):
         if picture.startswith("http"):
             url = picture
         else:
-            try:
-                base = get_url(self.hass, prefer_external=False, allow_external=False)
-            except NoURLAvailableError:
-                base = get_url(self.hass)
-            url = f"{base}{picture}"
+            url = f"{self._base_url()}{picture}"
 
         session = async_get_clientsession(self.hass)
         async with session.get(url) as resp:
