@@ -21,6 +21,8 @@ CONF_DLNA_ENTITY = "dlna_entity"
 CONF_LOCAL_TARGET = "local_target"
 CONF_RECURSIVE = "recursive"
 CONF_TOKEN = "token"
+CONF_SMB_USERNAME = "smb_username"
+CONF_SMB_PASSWORD = "smb_password"
 
 # ---------------------------------------------------------------------------
 # Source modes

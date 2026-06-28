@@ -25,6 +25,8 @@ from .const import (
     CONF_PLEX_ENTITY,
     CONF_RECURSIVE,
     CONF_SHUFFLE,
+    CONF_SMB_PASSWORD,
+    CONF_SMB_USERNAME,
     CONF_UPLOADER,
     DEFAULT_INTERVAL,
     DEFAULT_MODE,
@@ -106,6 +108,16 @@ def _common_schema(defaults: dict[str, Any]) -> vol.Schema:
             vol.Optional(
                 CONF_LOCAL_TARGET, default=defaults.get(CONF_LOCAL_TARGET, "")
             ): _TEXT_SELECTOR,
+            vol.Optional(
+                CONF_SMB_USERNAME,
+                description={"suggested_value": defaults.get(CONF_SMB_USERNAME)},
+            ): _TEXT_SELECTOR,
+            vol.Optional(
+                CONF_SMB_PASSWORD,
+                description={"suggested_value": defaults.get(CONF_SMB_PASSWORD)},
+            ): selector.TextSelector(
+                selector.TextSelectorConfig(type=selector.TextSelectorType.PASSWORD)
+            ),
         }
     )
 
@@ -115,7 +127,14 @@ def _clean(data: dict[str, Any]) -> dict[str, Any]:
     cleaned = dict(data)
     if CONF_INTERVAL in cleaned and cleaned[CONF_INTERVAL] is not None:
         cleaned[CONF_INTERVAL] = int(cleaned[CONF_INTERVAL])
-    for key in (CONF_FOLDER, CONF_LOCAL_TARGET, CONF_PLEX_ENTITY, CONF_DLNA_ENTITY):
+    for key in (
+        CONF_FOLDER,
+        CONF_LOCAL_TARGET,
+        CONF_PLEX_ENTITY,
+        CONF_DLNA_ENTITY,
+        CONF_SMB_USERNAME,
+        CONF_SMB_PASSWORD,
+    ):
         if cleaned.get(key) in ("", None):
             cleaned.pop(key, None)
     return cleaned

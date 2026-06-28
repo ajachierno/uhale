@@ -23,6 +23,8 @@ from .const import (
     CONF_PLEX_ENTITY,
     CONF_RECURSIVE,
     CONF_SHUFFLE,
+    CONF_SMB_PASSWORD,
+    CONF_SMB_USERNAME,
     CONF_TOKEN,
     CONF_UPLOADER,
     DEFAULT_INTERVAL,
@@ -37,6 +39,7 @@ from .const import (
     UPLOADER_DLNA,
     UPLOADER_LOCAL,
 )
+from . import smb
 from .uploaders.base import UhaleImage, UhaleUploader
 from .uploaders.dlna import DlnaUploader
 from .uploaders.local import LocalUploader
@@ -247,11 +250,21 @@ class UhaleCoordinator(DataUpdateCoordinator[dict]):
 
         data = await self.hass.async_add_executor_job(self._read_file, path)
         self.current_bytes = data
-        self.current_name = os.path.basename(path)
+        self.current_name = (
+            smb.basename(path) if smb.is_smb(path) else os.path.basename(path)
+        )
         self.current_source = path
         self.current_content_type = _content_type(path)
 
     def _scan_folder(self, folder: str) -> list[str]:
+        if smb.is_smb(folder):
+            return smb.scan(
+                folder,
+                self.recursive,
+                IMAGE_EXTENSIONS,
+                self._options.get(CONF_SMB_USERNAME),
+                self._options.get(CONF_SMB_PASSWORD),
+            )
         result: list[str] = []
         if self.recursive:
             for root, _dirs, names in os.walk(folder):
@@ -265,8 +278,13 @@ class UhaleCoordinator(DataUpdateCoordinator[dict]):
                         result.append(entry.path)
         return sorted(result)
 
-    @staticmethod
-    def _read_file(path: str) -> bytes:
+    def _read_file(self, path: str) -> bytes:
+        if smb.is_smb(path):
+            return smb.read(
+                path,
+                self._options.get(CONF_SMB_USERNAME),
+                self._options.get(CONF_SMB_PASSWORD),
+            )
         with open(path, "rb") as handle:
             return handle.read()
 
