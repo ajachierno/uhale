@@ -23,6 +23,7 @@ from .const import (
     CONF_PLEX_ENTITY,
     CONF_RECURSIVE,
     CONF_SHUFFLE,
+    CONF_TOKEN,
     CONF_UPLOADER,
     DEFAULT_INTERVAL,
     DEFAULT_MODE,
@@ -71,8 +72,14 @@ class UhaleCoordinator(DataUpdateCoordinator[dict]):
             update_interval=timedelta(seconds=self.interval),
         )
 
-        # Random token guards the HTTP view that serves the current image.
-        self.token = secrets.token_hex(16)
+        # Stable token guarding the HTTP views, persisted in the config entry so
+        # kiosk URLs survive Home Assistant restarts.
+        self.token = self._options.get(CONF_TOKEN)
+        if not self.token:
+            self.token = secrets.token_hex(16)
+            hass.config_entries.async_update_entry(
+                entry, data={**entry.data, CONF_TOKEN: self.token}
+            )
 
         self._playlist: list[str] = []
         self._index = -1

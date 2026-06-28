@@ -20,6 +20,7 @@ CONF_UPLOADER = "uploader"
 CONF_DLNA_ENTITY = "dlna_entity"
 CONF_LOCAL_TARGET = "local_target"
 CONF_RECURSIVE = "recursive"
+CONF_TOKEN = "token"
 
 # ---------------------------------------------------------------------------
 # Source modes
