@@ -91,15 +91,24 @@ _PAGE = """<!doctype html>
     background-position:center;background-repeat:no-repeat;background-size:contain;
     opacity:0;transition:opacity .8s ease-in-out}}
   .layer.on{{opacity:1}}
+  #np{{position:absolute;top:4%;left:50%;transform:translateX(-50%);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    color:#fff;background:rgba(0,0,0,.45);padding:.35em 1.1em;border-radius:.5em;
+    font-size:3.2vh;letter-spacing:.12em;text-transform:uppercase;font-weight:600;
+    opacity:0;transition:opacity .5s ease-in-out;pointer-events:none;
+    text-shadow:0 2px 8px rgba(0,0,0,.7)}}
+  #np.on{{opacity:1}}
 </style></head>
 <body>
   <div id="a" class="layer"></div>
   <div id="b" class="layer"></div>
+  <div id="np">Now Playing</div>
 <script>
   var ENTRY={entry!r};
   var TOKEN={token!r};
   var ver=-1, cur=0;
   var layers=[document.getElementById("a"), document.getElementById("b")];
+  var np=document.getElementById("np");
   function swap(v){{
     var img=new Image();
     img.onload=function(){{
@@ -114,7 +123,10 @@ _PAGE = """<!doctype html>
   function tick(){{
     fetch("/api/{domain}/"+ENTRY+"/state?token="+TOKEN, {{cache:"no-store"}})
       .then(function(r){{return r.json();}})
-      .then(function(j){{ if(j.version!==ver){{ ver=j.version; swap(ver); }} }})
+      .then(function(j){{
+        if(np) np.className = (j.mode==="plex") ? "on" : "";
+        if(j.version!==ver){{ ver=j.version; swap(ver); }}
+      }})
       .catch(function(){{}});
   }}
   setInterval(tick, 2000);
