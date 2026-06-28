@@ -96,7 +96,7 @@ _PAGE = """<!doctype html>
     color:#fff;background:rgba(0,0,0,.45);padding:.35em 1.1em;border-radius:.5em;
     font-size:3.2vh;letter-spacing:.12em;text-transform:uppercase;font-weight:600;
     opacity:0;transition:opacity .5s ease-in-out;pointer-events:none;
-    text-shadow:0 2px 8px rgba(0,0,0,.7)}}
+    white-space:nowrap;text-shadow:0 2px 8px rgba(0,0,0,.7)}}
   #np.on{{opacity:1}}
 </style></head>
 <body>
