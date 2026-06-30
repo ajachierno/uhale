@@ -21,6 +21,7 @@ from .const import (
     CONF_INTERVAL,
     CONF_LOCAL_TARGET,
     CONF_MODE,
+    CONF_PLAYSTATION_ENTITY,
     CONF_PLEX_ENTITY,
     CONF_RECURSIVE,
     CONF_SHUFFLE,
@@ -36,6 +37,7 @@ from .const import (
     DOMAIN,
     IMAGE_EXTENSIONS,
     MIN_INTERVAL,
+    MODE_PLAYSTATION,
     MODE_PLEX,
     UPLOADER_DLNA,
     UPLOADER_LOCAL,
@@ -133,6 +135,10 @@ class UhaleCoordinator(DataUpdateCoordinator[dict]):
         return self._options.get(CONF_PLEX_ENTITY)
 
     @property
+    def playstation_entity(self) -> str | None:
+        return self._options.get(CONF_PLAYSTATION_ENTITY)
+
+    @property
     def interval(self) -> int:
         return max(MIN_INTERVAL, int(self._options.get(CONF_INTERVAL, DEFAULT_INTERVAL)))
 
@@ -213,7 +219,11 @@ class UhaleCoordinator(DataUpdateCoordinator[dict]):
         self._pending_step = 1
         try:
             if self.mode == MODE_PLEX:
-                await self._load_plex_image()
+                await self._load_media_player_image(self.plex_entity, "Plex")
+            elif self.mode == MODE_PLAYSTATION:
+                await self._load_media_player_image(
+                    self.playstation_entity, "PlayStation"
+                )
             else:
                 await self._load_folder_image(step)
         except UpdateFailed:
@@ -301,10 +311,9 @@ class UhaleCoordinator(DataUpdateCoordinator[dict]):
         with open(path, "rb") as handle:
             return handle.read()
 
-    async def _load_plex_image(self) -> None:
-        entity_id = self.plex_entity
+    async def _load_media_player_image(self, entity_id: str | None, label: str) -> None:
         if not entity_id:
-            raise UpdateFailed("No Plex media_player entity configured")
+            raise UpdateFailed(f"No {label} media_player entity configured")
 
         state = self.hass.states.get(entity_id)
         if state is None:
@@ -328,7 +337,7 @@ class UhaleCoordinator(DataUpdateCoordinator[dict]):
         self.current_name = (
             state.attributes.get("media_title")
             or state.attributes.get("friendly_name")
-            or "Plex artwork"
+            or f"{label} artwork"
         )
         self.current_source = entity_id
 

@@ -22,6 +22,7 @@ from .const import (
     CONF_LOCAL_TARGET,
     CONF_MODE,
     CONF_NAME,
+    CONF_PLAYSTATION_ENTITY,
     CONF_PLEX_ENTITY,
     CONF_RECURSIVE,
     CONF_SHUFFLE,
@@ -94,6 +95,10 @@ def _common_schema(defaults: dict[str, Any]) -> vol.Schema:
                 description={"suggested_value": defaults.get(CONF_PLEX_ENTITY)},
             ): _MEDIA_PLAYER_SELECTOR,
             vol.Optional(
+                CONF_PLAYSTATION_ENTITY,
+                description={"suggested_value": defaults.get(CONF_PLAYSTATION_ENTITY)},
+            ): _MEDIA_PLAYER_SELECTOR,
+            vol.Optional(
                 CONF_INTERVAL,
                 default=defaults.get(CONF_INTERVAL, DEFAULT_INTERVAL),
             ): _INTERVAL_SELECTOR,
@@ -131,6 +136,7 @@ def _clean(data: dict[str, Any]) -> dict[str, Any]:
         CONF_FOLDER,
         CONF_LOCAL_TARGET,
         CONF_PLEX_ENTITY,
+        CONF_PLAYSTATION_ENTITY,
         CONF_DLNA_ENTITY,
         CONF_SMB_USERNAME,
         CONF_SMB_PASSWORD,

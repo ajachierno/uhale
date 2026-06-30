@@ -11,6 +11,7 @@
           "recursive": "Include subfolders",
           "shuffle": "Shuffle (random order)",
           "plex_entity": "Plex media player (for current artwork)",
+          "playstation_entity": "PlayStation media player (for current artwork)",
           "interval": "Slideshow interval (seconds)",
           "uploader": "Frame transport",
           "dlna_entity": "DLNA / cast renderer (for the DLNA transport)",
@@ -31,6 +32,7 @@
           "recursive": "Include subfolders",
           "shuffle": "Shuffle (random order)",
           "plex_entity": "Plex media player (for current artwork)",
+          "playstation_entity": "PlayStation media player (for current artwork)",
           "interval": "Slideshow interval (seconds)",
           "uploader": "Frame transport",
           "dlna_entity": "DLNA / cast renderer (for the DLNA transport)",
@@ -45,7 +47,8 @@
     "mode": {
       "options": {
         "folder": "Folder slideshow",
-        "plex": "Plex current artwork"
+        "plex": "Plex current artwork",
+        "playstation": "PlayStation current artwork"
       }
     },
     "uploader": {
@@ -61,7 +64,8 @@
       "mode": {
         "state": {
           "folder": "Folder slideshow",
-          "plex": "Plex current artwork"
+          "plex": "Plex current artwork",
+        "playstation": "PlayStation current artwork"
         }
       }
     }

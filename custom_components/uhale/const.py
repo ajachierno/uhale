@@ -16,6 +16,7 @@ CONF_FOLDER = "folder"
 CONF_SHUFFLE = "shuffle"
 CONF_INTERVAL = "interval"
 CONF_PLEX_ENTITY = "plex_entity"
+CONF_PLAYSTATION_ENTITY = "playstation_entity"
 CONF_UPLOADER = "uploader"
 CONF_DLNA_ENTITY = "dlna_entity"
 CONF_LOCAL_TARGET = "local_target"
@@ -29,7 +30,8 @@ CONF_SMB_PASSWORD = "smb_password"
 # ---------------------------------------------------------------------------
 MODE_FOLDER = "folder"
 MODE_PLEX = "plex"
-MODES: list[str] = [MODE_FOLDER, MODE_PLEX]
+MODE_PLAYSTATION = "playstation"
+MODES: list[str] = [MODE_FOLDER, MODE_PLEX, MODE_PLAYSTATION]
 
 # ---------------------------------------------------------------------------
 # Uploader (frame transport) types

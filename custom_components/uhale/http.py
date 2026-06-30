@@ -124,7 +124,7 @@ _PAGE = """<!doctype html>
     fetch("/api/{domain}/"+ENTRY+"/state?token="+TOKEN, {{cache:"no-store"}})
       .then(function(r){{return r.json();}})
       .then(function(j){{
-        if(np) np.className = (j.mode==="plex") ? "on" : "";
+        if(np) np.className = (j.mode && j.mode!=="folder") ? "on" : "";
         if(j.version!==ver){{ ver=j.version; swap(ver); }}
       }})
       .catch(function(){{}});
